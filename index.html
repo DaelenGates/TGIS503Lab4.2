@@ -1,0 +1,81 @@
+<html>
+<head>
+  <style>
+	body{
+		font-family: sans-serif;
+		max-width: 900px;
+		margin: auto;
+    background-color: gray;
+	}
+	</style>
+
+  <title> Daelen's Lab 4 </title>
+  <!-- input the Leaflet CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<!-- input the Leaflet JavaScript library -->
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <!-- Leaflet.markercluster CSS links -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
+  <!-- Leaflet.markercluster JS link -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <!-- input of the leflet legend api if needed -->
+  <link rel="stylesheet" href="leaflet.legend.css" />
+	<script src="leaflet.legend.js"></script>
+</head>
+
+<body>
+  <!-- title  -->
+  <h1>Bike Racks in Cambridge Massachusetts </h1>
+  <!-- this div creates the hold for hte map -->
+  <div id="map" style="height: 85vh"></div>
+  <!-- I will describe what i create here  -->
+  <p>Here is a map with the locations of the bike racks thoughout the city of Cambridge, MA. <br> <a href="https://www.cambridgema.gov/GIS/gisdatadictionary/Recreation/RECREATION_BikeRacks">Source</a> </p>
+  <!-- This script loads the bike data -->
+  <script type="text/javascript" src="bikeRacks2.js"></script>
+  <!-- This is where the map is built and made funcitonal  -->
+  <script>
+    var mymap = L.map('map').setView([42.3720822,-71.1088320],12);
+    // Base map is added here change if needed
+    var basemap = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(mymap);
+    // adds custom marker to Leaflet
+    var bike = L.icon({
+      iconUrl: 'bikeRack.png',
+
+      iconSize:     [38, 95], // size of the icon
+      shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+    // Adding in bike rack data as a variable so that it can be used with the leaflet cluster method
+    var bikeRacks = L.geoJson(data, {
+        pointToLayer: function(feature, latlng){
+        var marker = L.marker(latlng,{icon: bike});
+        marker.bindPopup("Status: " + feature.properties.Status + "<br>Capacity:" + feature.properties.Capacity);
+        return marker;
+    }
+    });
+    // this is the use of the cluster points method
+    var clusters = L.markerClusterGroup({showCoverageOnHover: false});
+    clusters.addLayer(bikeRacks);
+    mymap.addLayer(clusters);
+
+    var Legend = L.control.legend({
+      position:"bottomright",
+      opacity: 0.6,
+      legends:[
+        {
+          label:"Bike Rack",
+          type: "image",
+          url: "bikeRack.png",
+          fillOpacity: "1"
+        }
+      ]
+    }).addTo(mymap);
+
+    </script>
+</body>
+</html>
