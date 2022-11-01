@@ -53,7 +53,7 @@
     // Adding in bike rack data as a variable so that it can be used with the leaflet cluster method
     var bikeRacks = L.geoJson(data, {
         pointToLayer: function(feature, latlng){
-        var marker = L.marker(latlng,{icon: bike});
+        var marker = L.marker(latlng, {icon: bike});
         marker.bindPopup("Status: " + feature.properties.Status + "<br>Capacity:" + feature.properties.Capacity);
         return marker;
     }
